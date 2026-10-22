@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" font-family="Arial, sans-serif">
+  <rect width="1200" height="800" fill="#fbfaf7"/>
+  <text x="100" y="60" font-size="22" fill="#333">План квартиры · пример · 1 : 100</text>
+  <rect x="100" y="100" width="1000" height="600" fill="#3b3b3b"/>
+  <polygon points="120,120 690,120 690,680 509.99999999999994,680 509.99999999999994,490 120,490" fill="#fbfaf7"/>
+  <polygon points="120,509.99999999999994 490,509.99999999999994 490,680 120,680" fill="#fbfaf7"/>
+  <polygon points="710,120 1080,120 1080,400 710,400" fill="#fbfaf7"/>
+  <polygon points="710,420 890,420 890,680 710,680" fill="#fbfaf7"/>
+  <polygon points="910,420 1080,420 1080,680 910,680" fill="#fbfaf7"/>
+  <rect x="200" y="680" width="89.99999999999999" height="20.000000000000018" fill="#fbfaf7"/>
+  <rect x="300" y="490" width="89.99999999999999" height="19.99999999999997" fill="#fbfaf7"/>
+  <rect x="690" y="200" width="19.99999999999993" height="89.99999999999999" fill="#fbfaf7"/>
+  <rect x="690" y="560" width="19.99999999999993" height="80.00000000000007" fill="#fbfaf7"/>
+  <rect x="940" y="400" width="90.00000000000003" height="20.000000000000018" fill="#fbfaf7"/>
+  <rect x="220" y="100" width="220.00000000000003" height="20" fill="#bcd7ef" stroke="#3b3b3b" stroke-width="2"/>
+  <rect x="800" y="100" width="200" height="20" fill="#bcd7ef" stroke="#3b3b3b" stroke-width="2"/>
+  <rect x="100" y="200" width="20" height="179.99999999999997" fill="#bcd7ef" stroke="#3b3b3b" stroke-width="2"/>
+  <rect x="1080" y="490" width="19.99999999999993" height="130.00000000000003" fill="#bcd7ef" stroke="#3b3b3b" stroke-width="2"/>
+  <text x="132" y="146" font-size="16" fill="#8a8a8a">Гостиная</text>
+  <text x="132" y="536" font-size="16" fill="#8a8a8a">Прихожая</text>
+  <text x="722" y="146" font-size="16" fill="#8a8a8a">Кухня</text>
+  <text x="722" y="446" font-size="16" fill="#8a8a8a">Санузел</text>
+  <text x="922" y="446" font-size="16" fill="#8a8a8a">Спальня</text>
+  <g stroke="#333" stroke-width="2">
+    <line x1="100" y1="750" x2="400" y2="750"/>
+    <line x1="100" y1="742" x2="100" y2="758"/><line x1="200" y1="742" x2="200" y2="758"/><line x1="300" y1="742" x2="300" y2="758"/><line x1="400" y1="742" x2="400" y2="758"/>
+  </g>
+  <text x="410" y="756" font-size="16" fill="#333">3 м</text>
+</svg>

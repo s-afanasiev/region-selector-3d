@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Region Selector</title>
+  <meta name="description" content="Разметка зон на изображении и генерация 3D-помещений по плану" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 6h14v8h10v12H4z' fill='%232f6fed'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body class="is-empty">
+  <header class="toolbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 6h14v8h10v12H4z" /></svg>
+      <span>Region Selector</span>
+    </div>
+
+    <div class="group">
+      <button type="button" data-action="open" title="Открыть изображение или файл разметки">Открыть…</button>
+      <details class="menu">
+        <summary>Примеры</summary>
+        <div class="menu-items">
+          <button type="button" data-action="sample" data-sample="plan">План квартиры → 3D</button>
+          <button type="button" data-action="sample" data-sample="panorama">Панорама 360°</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="group segmented" role="group" aria-label="Инструмент">
+      <button type="button" data-action="tool" data-tool="select" aria-pressed="false" title="Выбор (V)">Выбор <kbd>V</kbd></button>
+      <button type="button" data-action="tool" data-tool="draw" aria-pressed="true" title="Контур (P)">Контур <kbd>P</kbd></button>
+      <button type="button" data-action="tool" data-tool="calibrate" aria-pressed="false" title="Масштаб по отрезку известной длины (M)">Масштаб <kbd>M</kbd></button>
+    </div>
+
+    <div class="group">
+      <button type="button" class="icon-button" data-action="undo" title="Отменить (Ctrl+Z)" aria-label="Отменить">↶</button>
+      <button type="button" class="icon-button" data-action="redo" title="Повторить (Ctrl+Y)" aria-label="Повторить">↷</button>
+    </div>
+
+    <div class="group">
+      <label class="field" title="Размер клетки сетки зон, px">Клетка
+        <input id="cell-size" type="number" min="2" max="200" step="1" value="20" /> px
+      </label>
+      <button type="button" data-action="grid" aria-pressed="false" title="Сетка (G)">Сетка</button>
+    </div>
+
+    <div class="group push">
+      <details class="menu menu-right">
+        <summary>Экспорт</summary>
+        <div class="menu-items">
+          <button type="button" data-action="export-json">Разметка — JSON</button>
+          <button type="button" data-action="export-legacy">Разметка — arr_*.js для плеера тура</button>
+          <button type="button" data-action="export-png">Картинка с разметкой — PNG</button>
+          <button type="button" data-action="export-glb">3D-модель — GLB</button>
+        </div>
+      </details>
+      <button type="button" data-action="toggle-3d" aria-pressed="true">3D</button>
+    </div>
+    <input id="file-input" type="file" accept="image/*,.json,.js" multiple hidden />
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <section class="panel panel-zones">
+        <h2>Зоны <span id="zone-summary" class="muted"></span></h2>
+        <ul id="zone-list" class="zone-list"></ul>
+      </section>
+      <section class="panel">
+        <h2>Помещения в 3D</h2>
+        <form id="walls-form" class="walls-form" onsubmit="return false">
+          <label class="field">Высота стен <input name="wallHeight" type="number" min="0.1" max="10" step="0.1" value="2.7" /> м</label>
+          <label class="field">Толщина <input name="wallThickness" type="number" min="0.02" max="1" step="0.02" value="0.12" /> м</label>
+        </form>
+        <p class="muted small">Масштаб: <span id="scale-value">не задан</span></p>
+      </section>
+    </aside>
+
+    <section class="view view-plan" aria-label="План">
+      <div id="plan" class="plan-host" tabindex="-1"></div>
+      <div class="empty-state">
+        <p>Перетащите сюда план, панораму или файл разметки</p>
+        <div class="empty-actions">
+          <button type="button" data-action="sample" data-sample="plan">План квартиры → 3D</button>
+          <button type="button" data-action="sample" data-sample="panorama">Панорама 360°</button>
+        </div>
+      </div>
+      <div class="view-controls">
+        <button type="button" class="icon-button" data-action="zoom-out" aria-label="Отдалить">−</button>
+        <button type="button" class="icon-button" data-action="fit" title="Вписать (F)" aria-label="Вписать">⤢</button>
+        <button type="button" class="icon-button" data-action="zoom-in" aria-label="Приблизить">+</button>
+      </div>
+    </section>
+
+    <section class="view view-scene" aria-label="3D">
+      <div id="scene" class="scene-host rooms-only"></div>
+      <div id="panorama" class="scene-host panorama-only"></div>
+      <div class="scene-top">
+        <div class="segmented" role="group" aria-label="3D-вид">
+          <button type="button" data-action="scene-mode" data-scene-mode="rooms" aria-pressed="true">Комнаты</button>
+          <button type="button" data-action="scene-mode" data-scene-mode="panorama" aria-pressed="false">Панорама 360°</button>
+        </div>
+        <p id="scene-notice" class="scene-notice rooms-only"></p>
+        <p class="scene-notice panorama-only">Перетаскивайте — осмотреться · колесо — приближение · клик — выбрать зону</p>
+      </div>
+      <div class="view-controls">
+        <button type="button" data-action="frame-3d" title="Вернуть камеру">Камера</button>
+        <button type="button" class="rooms-only" data-action="export-glb" title="Скачать модель для Blender">GLB</button>
+      </div>
+    </section>
+  </main>
+
+  <footer id="statusbar" class="statusbar">
+    <span data-status="hint"></span>
+    <span data-status="message" aria-live="polite"></span>
+    <span class="push" data-status="cursor"></span>
+  </footer>
+
+  <dialog id="length-dialog" class="dialog">
+    <form method="dialog">
+      <h3>Длина отрезка</h3>
+      <p class="muted small">На изображении: <span data-px></span></p>
+      <label class="field">Реальная длина <input name="meters" type="text" inputmode="decimal" required pattern="[0-9]+([.,][0-9]+)?" placeholder="например, 3" /> м</label>
+      <div class="dialog-actions">
+        <button type="submit" value="cancel" formnovalidate>Отмена</button>
+        <button type="submit" value="ok" class="primary">Задать масштаб</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="drop-overlay" aria-hidden="true">Отпустите, чтобы открыть</div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
