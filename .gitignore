@@ -2,3 +2,5 @@ node_modules/
 dist/
 *.rar
 .claude/
+# канон ООП — личный документ, в публичный репозиторий не попадает
+oop-principles*.md
